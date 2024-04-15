@@ -1,14 +1,25 @@
-const addTaskButton = document.querySelector(".add-button");
-const input = document.querySelector(".input");
-const tasksWrapper = document.querySelector(".tasks-wrappper");
-const delButton = document.querySelector(".delButton");
+import { addTaskButton, input, tasksWrapper } from "./const.js";
 
 class AllTasks {
   constructor() {
     this.tasks = [];
+    this.showAllTasks = true;
   }
   onDelete(id) {
-    this.tasks = this.tasks.filter((task) => task.id !== id);
+    const modal = document.querySelector(".modal");
+    modal.classList.add("openModal");
+    const confirmDelBtn = document.querySelector(".yesButton");
+    const cancelDelBtn = document.querySelector(".noButton");
+    confirmDelBtn.addEventListener("click", () => {
+      this.tasks = this.tasks.filter((task) => task.id !== id);
+      modal.classList.remove("openModal");
+      // localStorage.setItem("storedTasks", JSON.stringify(allTasks));
+
+      updateTaskList();
+    });
+    cancelDelBtn.addEventListener("click", () => {
+      modal.classList.remove("openModal");
+    });
   }
   add(task) {
     this.tasks.unshift(task);
@@ -16,16 +27,24 @@ class AllTasks {
   delAll() {
     this.tasks = [];
   }
-  activeTasks() {
-    this.tasks.filter((task) => !task.checked);
-    return this.tasks;
+  renderTasks() {
+    const activeTasksBtn = document.querySelector(".ActiveTasksBtn");
+    activeTasksBtn.addEventListener("click", () => {
+      this.showAllTasks = false;
+      updateTaskList();
+    });
+    const allTaksbtn = document.querySelector(".allTasksBtn");
+    allTaksbtn.addEventListener("click", () => {
+      this.showAllTasks = true;
+      updateTaskList();
+    });
   }
 }
 
 class NewTask {
-  constructor(name) {
+  constructor(name, checked) {
     this.name = name;
-    this.checked = false;
+    this.checked = checked;
     this.ischanging = false;
     this.id = Date.now();
   }
@@ -33,16 +52,18 @@ class NewTask {
     this.checked = !this.checked;
   }
   startEditing() {
+    addTaskButton.classList.add("nonVis");
     this.ischanging = true;
     input.value = this.name;
     input.focus();
     input.addEventListener(
       "blur",
       () => {
-        console.log("Blured");
         this.ischanging = false;
         this.change(input.value);
         input.value = "";
+        addTaskButton.classList.remove("nonVis");
+
         updateTaskList();
       },
       { once: true }
@@ -52,31 +73,27 @@ class NewTask {
   change(newName) {
     this.name = newName;
   }
-
-  // change() {
-  //   this.ischanging = true;
-  //   input.value = this.name;
-  //   input.focus();
-  //   this.name = input.value;
-  //   input.addEventListener("keypress", function (e) {
-  //     let key = e.which || e.keyCode;
-  //     if (key === 13) {
-  //       this.name = input.value;
-  //     }
-  //   });
-  // }
 }
+
+let storedTasks = JSON.parse(localStorage.getItem("storedTasks"));
+console.log(storedTasks);
+storedTasks.tasks.reverse();
 
 const allTasks = new AllTasks();
 
+storedTasks.tasks.forEach((item) => {
+  const storedTask = new NewTask(item.name, item.checked);
+  allTasks.add(storedTask);
+  updateTaskList();
+});
+
 addTaskButton.addEventListener("click", () => {
   const addedTask = new NewTask(input.value);
-
+  console.log(localStorage);
   if (input.value) {
     allTasks.add(addedTask);
     input.value = "";
     updateTaskList();
-    console.log(allTasks.tasks.length);
   }
 });
 
@@ -89,27 +106,22 @@ input.addEventListener("keypress", function (e) {
 
 const onDelete = (id) => {
   allTasks.onDelete(id);
+  // localStorage.setItem("storedTasks", JSON.stringify(allTasks));
+
   updateTaskList();
 };
 
 function updateTaskList() {
+  allTasks.renderTasks();
   tasksWrapper.innerHTML = "";
   const counter = document.createElement("h3");
   counter.classList.add("counter");
   counter.innerHTML = `TASKS - ${allTasks.tasks.length}`;
 
-  const activeTasks = document.createElement("button");
-  activeTasks.textContent = "Active Tasks";
-
-  activeTasks.addEventListener("click", () => {
-    allTasks.activeTasks();
-    console.log(allTasks);
-  });
-
-  tasksWrapper.appendChild(activeTasks);
-
-  console.log(allTasks.tasks.length);
-  allTasks.tasks.forEach((item) => {
+  const filtredTasks = allTasks.showAllTasks
+    ? allTasks.tasks
+    : allTasks.tasks.filter((task) => !task.checked);
+  filtredTasks.forEach((item) => {
     const taskItem = document.createElement("div");
     taskItem.classList.add("task-item");
     //чекбокс
@@ -122,6 +134,10 @@ function updateTaskList() {
       item.onDone();
       updateTaskList();
     });
+    //label for checkbox
+    const label = document.createElement("label");
+    label.setAttribute("for", `${item.id}`);
+    label.classList.add("label");
 
     const taskTitle = document.createElement("h2");
     taskTitle.textContent = item.name;
@@ -132,11 +148,9 @@ function updateTaskList() {
     const editButton = document.createElement("button");
     editButton.id = item.id;
     editButton.classList.add("editBtn");
-    editButton.textContent = "change";
+    editButton.textContent = "Edit";
 
     editButton.addEventListener("click", () => {
-      console.log(`editButton ID \n ${editButton.id}`);
-      console.log(`Item ID \n ${item.id}`);
       item.startEditing();
     });
 
@@ -151,6 +165,7 @@ function updateTaskList() {
 
     //счетчик задач
     taskItem.appendChild(checkbox);
+    taskItem.appendChild(label);
     taskItem.appendChild(taskTitle);
     taskItem.appendChild(editButton);
     taskItem.appendChild(deleteButton);
@@ -168,4 +183,5 @@ function updateTaskList() {
     });
     tasksWrapper.appendChild(delAll);
   }
+  localStorage.setItem("storedTasks", JSON.stringify(allTasks));
 }

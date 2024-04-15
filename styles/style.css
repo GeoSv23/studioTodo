@@ -4,9 +4,12 @@ body {
   align-items: center;
   height: 100vh;
   background-color: #f5f9ff;
+  margin: 0;
+  padding: 0;
 }
 
 .wrapper {
+  display: flex;
   border: 1px solid;
   border-radius: 32px;
   margin: auto;
@@ -17,6 +20,8 @@ body {
   top: 100px;
   height: max-content;
   padding-bottom: 100px;
+  flex-direction: column;
+  align-items: center;
 }
 .head-section {
   width: 600px;
@@ -45,11 +50,15 @@ body {
   width: 85px;
   position: absolute;
   top: 11px;
-  right: 100px;
-  background-color: #25b020;
+  right: 0px;
+  background-color: rgb(121, 180, 43);
   border: 1px solid #2d70fd;
   color: white;
   border-radius: 5px;
+}
+
+.confirm-button:hover {
+  cursor: pointer;
 }
 
 .add-button {
@@ -69,19 +78,35 @@ body {
   cursor: pointer;
 }
 
+.nonVis {
+  display: none;
+}
+
 .editBtn {
-  font-weight: 100;
-  height: 35px;
-  top: 11px;
-  background-color: #25b020;
-  border: 1px solid #2d70fd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(121, 180, 43);
   color: white;
+  width: 38px;
+  height: 23px;
+  border: none;
   border-radius: 5px;
+  position: absolute;
+  right: 61px;
+}
+
+.editBtn:hover {
+  cursor: pointer;
+  scale: 0.9;
+  transition: 0.5s;
 }
 
 .tasks-wrappper {
   width: 600px;
-  margin: auto;
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .task-item {
@@ -104,6 +129,24 @@ body {
   align-items: center;
   background: green;
   border-radius: 50%;
+}
+.checkbox {
+  position: absolute;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.label {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.checkbox:checked + .label {
+  background-image: url(/public/icons8-checkmark.svg);
+  background-position: center;
 }
 .task-item__title {
   font-size: 24px;
@@ -161,4 +204,61 @@ body {
 .counter:hover {
   color: black;
   cursor: pointer;
+}
+/* modal window */
+
+.modal {
+  width: 100%;
+  height: 100%;
+  background-color: #000000cc;
+  z-index: 1;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.openModal {
+  display: flex;
+}
+
+.modal-window {
+  background-color: white;
+  width: 500px;
+  height: 200px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.modal-title {
+  font-family: sans-serif;
+}
+
+.button {
+  color: white;
+  width: 100px;
+  height: 50px;
+  border-radius: 10px;
+  border: 0.5px solid;
+  cursor: pointer;
+}
+.yesButton {
+  background-color: rgb(121, 180, 43);
+}
+.noButton {
+  background-color: rgb(222, 47, 47);
+}
+
+.changer-buttons {
+  background: transparent;
+  border: transparent;
+  color: gray;
+  font-size: 22px;
+  margin: 0 20px;
+}
+
+.changer-buttons:hover {
+  cursor: pointer;
+  color: black;
 }
