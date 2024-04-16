@@ -76,16 +76,17 @@ class NewTask {
 }
 
 let storedTasks = JSON.parse(localStorage.getItem("storedTasks"));
-console.log(storedTasks);
+console.log(storedTasks.tasks);
 storedTasks.tasks.reverse();
 
 const allTasks = new AllTasks();
-
-storedTasks.tasks.forEach((item) => {
-  const storedTask = new NewTask(item.name, item.checked);
-  allTasks.add(storedTask);
-  updateTaskList();
-});
+if (storedTasks) {
+  storedTasks.tasks.forEach((item) => {
+    const storedTask = new NewTask(item.name, item.checked);
+    allTasks.add(storedTask);
+    updateTaskList();
+  });
+}
 
 addTaskButton.addEventListener("click", () => {
   const addedTask = new NewTask(input.value);

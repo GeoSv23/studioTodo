@@ -28,8 +28,7 @@ body {
   margin: 75px auto;
 }
 .title {
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-family: sans-serif;
 }
 .controls-block {
   width: 600px;
